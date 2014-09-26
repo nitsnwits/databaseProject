@@ -13,6 +13,7 @@ class Database(object):
     """
     def __init__(self):
         self.connection = psycopg2.connect(database="postgres", host="/tmp", user="postgres", password="data");
+        self.connection.autocommit = True;
         self.cursor = self.connection.cursor();
     
     def __str__(self):
@@ -20,7 +21,6 @@ class Database(object):
     
     def insert(self, row):
         self.cursor.execute("INSERT into fire (id, fire_name) values (%s, %s)", row);
-        self.connection.commit;
         print "inserted rows and commited, sucker"
     
     def query(self):
