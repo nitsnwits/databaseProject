@@ -20,8 +20,7 @@ class Database(object):
         return "PGSQL database cursor"
     
     def insert(self, row):
-        self.cursor.execute("INSERT into fire (id, fire_name) values (%s, %s)", row);
-        print "inserted rows and commited, sucker"
+        self.cursor.execute("INSERT into fire values (%s, %s, %s, %s, %s, %s, %s, %s, %s)", row);
     
     def query(self):
         self.cursor.execute("SELECT * from fire");

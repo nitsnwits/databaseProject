@@ -14,6 +14,7 @@ import os
 import csv
 from collections import defaultdict
 from config.init import database
+from psycopg2 import DataError
 
 #Global variables
 
@@ -33,6 +34,13 @@ def readFile(filename):
             rows.next(); #ignore headers
             for row in rows:
                 if row:
+                    del row[6]; #drop unnecessary columns
+                    del row[7];
+                    if(len(row) > 8):
+                        del row[-1];
+                    #makeshift :(
+                    if (not row[6] or isinstance(row[6], basestring)):
+                        row[6] = '0';
                     parsedDataSet[generateUUID()].extend(row);
         except StopIteration:
             print "WARN: Found empty file: " + filename
@@ -42,13 +50,29 @@ def readAllFiles():
     for file in filesList:
         readFile(file);
     return;
+    
+def loadToDatabase(dataset):
+    '''
+    Takes all rows and load in database
+    '''
+    db = database.Database();
+    for key, val in dataset.iteritems():
+        row = [key];
+        row.extend(val);
+        try:
+            db.insert(row);
+        except (TypeError, DataError, IndexError) as e:
+            print "ERROR: Inserting a row: " + str(row) + str(e);
+            
+    db = None; #garbage collect db instance
 
 readAllFiles();
-db = database.Database();
-row = [generateUUID(), 'MyFirstEntry']
-db.insert(row);
-print db.query();
-db = 0;
+loadToDatabase(parsedDataSet);
+# db = database.Database();
+# row = [generateUUID(), 'MyFirstEntry']
+# db.insert(row);
+# print db.query();
+# db = 0;
 
 # i=0
 # for key, val in parsedDataSet.iteritems():
