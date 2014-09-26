@@ -13,6 +13,7 @@ import uuid
 import os
 import csv
 from collections import defaultdict
+from config.init import database
 
 #Global variables
 
@@ -43,14 +44,19 @@ def readAllFiles():
     return;
 
 readAllFiles();
+db = database.Database();
+row = [generateUUID(), 'MyFirstEntry']
+db.insert(row);
+print db.query();
+db = 0;
 
-i=0
-for key, val in parsedDataSet.iteritems():
-    print key + '->' + str(val);
-    if i > 10:
-        break;
-    else:
-        i += 1;
+# i=0
+# for key, val in parsedDataSet.iteritems():
+#     print key + '->' + str(val);
+#     if i > 10:
+#         break;
+#     else:
+#         i += 1;
     
 
     
